@@ -31,7 +31,7 @@ get_credentials() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     expiration_time=$(date -v+${expires_in}S +"%Y-%m-%d %H:%M:%S")
   else
-    expiration_time=$(date -d "+${expires_in} seconds" +"%Y-%m-%d %H:%M:%S")
+    expiration_time=$(date -u -d "@$(($(date +%s) + expires_in))" +"%Y-%m-%d %H:%M:%S")
   fi
 
   if [ -z "$VERTEX_AI_ACCESS_TOKEN" ]; then
