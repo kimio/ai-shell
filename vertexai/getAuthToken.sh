@@ -9,10 +9,10 @@ get_credentials() {
     echo "$CREDENTIALS_FILE not found"
     exit 1
   fi
-
-  CLIENT_ID=$(grep '"client_id"' "$CREDENTIALS_FILE" | sed 's/.*: "\(.*\)",/\1/' | tr -d ' ')
-  CLIENT_SECRET=$(grep '"client_secret"' "$CREDENTIALS_FILE" | sed 's/.*: "\(.*\)",/\1/' | tr -d ' ')
-  REFRESH_TOKEN=$(grep '"refresh_token"' "$CREDENTIALS_FILE" | sed 's/.*: "\(.*\)"/\1/' | tr -d ' ')
+  
+  CLIENT_ID=$(cat "$CREDENTIALS_FILE" | grep -o '"client_id":"[^"]*"' | sed 's/"client_id":"\([^"]*\)"/\1/' | tr -d ' ')
+  CLIENT_SECRET=$(cat "$CREDENTIALS_FILE" | grep -o '"client_secret":"[^"]*"' | sed 's/"client_secret":"\([^"]*\)"/\1/' | tr -d ' ')
+  REFRESH_TOKEN=$(cat "$CREDENTIALS_FILE" | grep -o '"refresh_token":"[^"]*"' | sed 's/"refresh_token":"\([^"]*\)"/\1/' | tr -d ' ')
 
   if [ -z "$CLIENT_ID" ] || [ -z "$CLIENT_SECRET" ] || [ -z "$REFRESH_TOKEN" ]; then
     echo "Error to get data on $CREDENTIALS_FILE!"
