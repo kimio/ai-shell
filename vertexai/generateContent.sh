@@ -22,11 +22,12 @@ make_request() {
     local model_id="$5"
     local request_file="$6"
 
-    curl \
+    result=$(curl \
         -X POST \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $access_token" \
-        "https://${api_endpoint}/v1/projects/${project_id}/locations/${location_id}/publishers/google/models/${model_id}:generateContent" -d "@${request_file}"
+        "https://${api_endpoint}/v1/projects/${project_id}/locations/${location_id}/publishers/google/models/${model_id}:generateContent" -d "@${request_file}")
+    echo $result
 }
 
 while getopts "p:l:a:m:r:h" opt; do
