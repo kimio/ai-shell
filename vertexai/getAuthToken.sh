@@ -9,10 +9,10 @@ get_credentials() {
     echo "$CREDENTIALS_FILE not found"
     exit 1
   fi
-  
-  CLIENT_ID=$(cat "$CREDENTIALS_FILE" | grep -o '"client_id":"[^"]*"' | sed 's/"client_id":"\([^"]*\)"/\1/' | tr -d ' ')
-  CLIENT_SECRET=$(cat "$CREDENTIALS_FILE" | grep -o '"client_secret":"[^"]*"' | sed 's/"client_secret":"\([^"]*\)"/\1/' | tr -d ' ')
-  REFRESH_TOKEN=$(cat "$CREDENTIALS_FILE" | grep -o '"refresh_token":"[^"]*"' | sed 's/"refresh_token":"\([^"]*\)"/\1/' | tr -d ' ')
+  CREDENTIALS=$(cat "$CREDENTIALS_FILE" | tr -d ' ')
+  CLIENT_ID=$(echo "$CREDENTIALS"| grep -o '"client_id":"[^"]*"'|sed 's/"client_id":"\([^"]*\)"/\1/'| tr -d ' ')
+  CLIENT_SECRET=$(echo "$CREDENTIALS"| grep -o '"client_secret":"[^"]*"'|sed 's/"client_secret":"\([^"]*\)"/\1/'| tr -d ' ')
+  REFRESH_TOKEN=$(echo "$CREDENTIALS"| grep -o '"refresh_token":"[^"]*"'|sed 's/"refresh_token":"\([^"]*\)"/\1/'| tr -d ' ')
 
   if [ -z "$CLIENT_ID" ] || [ -z "$CLIENT_SECRET" ] || [ -z "$REFRESH_TOKEN" ]; then
     echo "Error to get data on $CREDENTIALS_FILE!"
@@ -28,18 +28,14 @@ get_credentials() {
 
   VERTEX_AI_ACCESS_TOKEN=$(echo $ACCESS_DATA | grep -o '"access_token": "[^"]*"' | sed 's/"access_token": "\([^"]*\)"/\1/')
   expires_in=$(echo $ACCESS_DATA | grep -o '"expires_in": [0-9]*' | sed 's/"expires_in": \([0-9]*\)/\1/')
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    expiration_time=$(date -v+${expires_in}S +"%Y-%m-%d %H:%M:%S")
-  else
-    expiration_time=$(date -u -d "@$(($(date +%s) + expires_in))" +"%Y-%m-%d %H:%M:%S")
-  fi
+  expiration_time=$(date -v+${expires_in}S +"%Y-%m-%d %H:%M:%S")
 
   if [ -z "$VERTEX_AI_ACCESS_TOKEN" ]; then
     echo "Error obtaining the access token!"
     exit 1
   fi
 
-  echo "$VERTEX_AI_ACCESS_TOKEN" >$(echo ../config/google/access_token_$expiration_time".txt")
+  echo "$VERTEX_AI_ACCESS_TOKEN" > $( echo ../config/google/access_token_$expiration_time".txt")
   echo "$VERTEX_AI_ACCESS_TOKEN"
 }
 
