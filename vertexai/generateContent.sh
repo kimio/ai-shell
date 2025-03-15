@@ -61,4 +61,4 @@ if [ -z "$project_id" ] || [ -z "$location_id" ] || [ -z "$api_endpoint" ] || [ 
     exit 1
 fi
 
-make_request "$access_token" "$project_id" "$location_id" "$api_endpoint" "$model_id" "$request_file" > 
+make_request "$access_token" "$project_id" "$location_id" "$api_endpoint" "$model_id" "$request_file"
