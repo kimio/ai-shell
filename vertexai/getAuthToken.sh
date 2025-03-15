@@ -28,7 +28,11 @@ get_credentials() {
 
   VERTEX_AI_ACCESS_TOKEN=$(echo $ACCESS_DATA | grep -o '"access_token": "[^"]*"' | sed 's/"access_token": "\([^"]*\)"/\1/')
   expires_in=$(echo $ACCESS_DATA | grep -o '"expires_in": [0-9]*' | sed 's/"expires_in": \([0-9]*\)/\1/')
-  expiration_time=$(date -v+${expires_in}S +"%Y-%m-%d %H:%M:%S")
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    expiration_time=$(date -v+${expires_in}S +"%Y-%m-%d %H:%M:%S")
+  else
+    expiration_time=$(date -u -d "@$(($(date +%s) + expires_in))" +"%Y-%m-%d %H:%M:%S")
+  fi
 
   if [ -z "$VERTEX_AI_ACCESS_TOKEN" ]; then
     echo "Error obtaining the access token!"
