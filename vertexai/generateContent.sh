@@ -22,12 +22,19 @@ make_request() {
     local model_id="$5"
     local request_file="$6"
 
-    result=$(curl \
+    if [ ! -f "$request_file" ]; then
+        echo "Error: Request file '$request_file' not found"
+        exit 1
+    fi
+
+    local response=$(curl -s \
         -X POST \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $access_token" \
-        "https://${api_endpoint}/v1/projects/${project_id}/locations/${location_id}/publishers/google/models/${model_id}:generateContent" -d "@${request_file}")
-    echo $result
+        "https://${api_endpoint}/v1/projects/${project_id}/locations/${location_id}/publishers/google/models/${model_id}:generateContent" \
+        --data "@${request_file}")
+    
+    echo "$response"
 }
 
 while getopts "p:l:a:m:r:h" opt; do
@@ -54,4 +61,4 @@ if [ -z "$project_id" ] || [ -z "$location_id" ] || [ -z "$api_endpoint" ] || [ 
     exit 1
 fi
 
-make_request "$access_token" "$project_id" "$location_id" "$api_endpoint" "$model_id" "$request_file"
+make_request "$access_token" "$project_id" "$location_id" "$api_endpoint" "$model_id" "$request_file" > 
